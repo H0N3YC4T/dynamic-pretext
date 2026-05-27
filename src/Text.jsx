@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Box } from "@mui/material";
 import { TextImpl } from "./components/TextImpl";
 
@@ -50,9 +51,10 @@ import { TextImpl } from "./components/TextImpl";
  * className      {string}      CSS class on the root element.
  * shrinkWrap     {boolean}     If true, the container will shrink to exactly fit the widest line of text.
  * manualNewLine  {boolean}     If true, text will never wrap automatically, forcing the container to expand unless a \n is encountered. (Alias: noWrap)
+ * component      {string}      Underlying HTML element to render (default "div").
  */
-export const Text = (props) => {
-  const { text = "", sx, className, shrinkWrap, manualNewLine, noWrap, ignoreLineBreaks, wrapBuffer, lazyWrapping, align, ...rest } = props;
+export const Text = forwardRef((props, ref) => {
+  const { text = "", sx, className, shrinkWrap, manualNewLine, noWrap, ignoreLineBreaks, wrapBuffer, lazyWrapping, align, component = "div", ...rest } = props;
   const preventWrap = manualNewLine || noWrap;
   const appliedWrapBuffer = lazyWrapping ? 0 : wrapBuffer;
   const currentAlign = align || sx?.textAlign;
@@ -63,8 +65,10 @@ export const Text = (props) => {
       const lines = normalizedText.split("\n");
       return (
         <Box 
+          ref={ref}
+          component={component}
           sx={{ 
-            display: "flex", 
+            display: component === "span" ? "inline-flex" : "flex", 
             flexDirection: "column", 
             ...(currentAlign === "center" ? { alignItems: "center", ...(shrinkWrap || preventWrap ? { mx: "auto" } : {}) } : currentAlign === "right" ? { alignItems: "flex-end", ...(shrinkWrap || preventWrap ? { ml: "auto" } : {}) } : {}),
             ...(shrinkWrap && { width: "max-content", maxWidth: "100%" }), 
@@ -74,7 +78,7 @@ export const Text = (props) => {
           className={className}
         >
           {lines.map((line, i) => (
-            <TextImpl key={i} {...rest} align={align} wrapBuffer={appliedWrapBuffer} text={line || (ignoreLineBreaks ? " " : "\u00A0")} shrinkWrap={shrinkWrap} manualNewLine={preventWrap} sx={{}} className="" />
+            <TextImpl key={i} {...rest} align={align} wrapBuffer={appliedWrapBuffer} component={component} text={line || (ignoreLineBreaks ? " " : "\u00A0")} shrinkWrap={shrinkWrap} manualNewLine={preventWrap} sx={{}} className="" />
           ))}
         </Box>
       );

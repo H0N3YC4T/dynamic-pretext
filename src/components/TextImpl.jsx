@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, forwardRef, useImperativeHandle } from "react";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
@@ -12,10 +12,16 @@ import { useFontsLoaded } from "../../../hooks/useFontsLoaded";
 import { PretextSimpleText } from "./PretextSimpleText";
 import { PretextRichText } from "./PretextRichText";
 
-export const TextImpl = ({
+export const TextImpl = forwardRef(({
   text = "",
   variant,
   palette,
+  color,
+  fontSize,
+  fontWeight,
+  lineHeight,
+  letterSpacing,
+  textTransform,
   width,
   config,
   sx,
@@ -27,17 +33,33 @@ export const TextImpl = ({
   manualNewLine,
   noWrap,
   wrapBuffer,
+  component = "div",
   ...htmlProps
-}) => {
+}, ref) => {
   const preventWrap = manualNewLine || noWrap;
   const theme = useTheme();
   const fontsLoaded = useFontsLoaded();
+  
+  const finalPalette = palette || color;
 
   // ── Theme data ─────────────────────────────────────────────────────────────
   // Extract typography-relevant sx keys so they are fed into pretext measurement,
   // keeping the engine's line-break calculation in sync with visual rendering.
-  const sxExtract     = useMemo(() => ({ ...extractSxTypography(sx), ...(preventWrap && { whiteSpace: "nowrap" }) }), [sx, preventWrap]);
-  const themeData     = usePretextTheme(variant, palette, sxExtract);
+  // We merge direct props with sx overrides (sx takes precedence if provided).
+  const sxExtract = useMemo(() => {
+    const fromSx = extractSxTypography(sx);
+    return {
+      fontSize: fromSx.fontSize ?? fontSize,
+      fontWeight: fromSx.fontWeight ?? fontWeight,
+      lineHeight: fromSx.lineHeight ?? lineHeight,
+      letterSpacing: fromSx.letterSpacing ?? letterSpacing,
+      textTransform: fromSx.textTransform ?? textTransform,
+      whiteSpace: preventWrap ? "nowrap" : fromSx.whiteSpace,
+      wordBreak: fromSx.wordBreak,
+    };
+  }, [sx, fontSize, fontWeight, lineHeight, letterSpacing, textTransform, preventWrap]);
+
+  const themeData     = usePretextTheme(variant, finalPalette, sxExtract);
   const pretextRules  = usePretextRules(themeData.resolveColor, theme);
 
   const mergedPrepareOptions = useMemo(
@@ -57,18 +79,21 @@ export const TextImpl = ({
   // It is only consumed by PretextText via the Box ref on the simple path.
   usePretextContainerWidth(containerRef); // keep attached; PretextText reads it
 
+  // Forward the internal container ref to the user's ref if provided
+  useImperativeHandle(ref, () => containerRef.current);
+
   // ── Box sx ─────────────────────────────────────────────────────────────────
   // MUI Box receives the full sx prop (shorthands like mb, mt, p, … work here).
   const boxSx = useMemo(
     () => ({
-      display: "block",
+      display: component === "span" ? "inline-block" : "block",
       width:   fixedWidth ? `${fixedWidth}px` : (shrinkWrap || preventWrap ? "fit-content" : "100%"),
       ...(shrinkWrap && !preventWrap && !fixedWidth ? { maxWidth: "100%" } : {}),
       ...(preventWrap && { whiteSpace: "nowrap", width: "max-content", maxWidth: "none" }),
       ...sx,
       ...(align === "center" ? { textAlign: align, ...(shrinkWrap || preventWrap ? { mx: "auto" } : {}) } : align === "right" ? { textAlign: align, ...(shrinkWrap || preventWrap ? { ml: "auto" } : {}) } : align ? { textAlign: align } : {}),
     }),
-    [fixedWidth, sx, align, shrinkWrap, preventWrap],
+    [fixedWidth, sx, align, shrinkWrap, preventWrap, component],
   );
 
   // ── Apply textTransform before measurement ─────────────────────────────────
@@ -96,7 +121,7 @@ export const TextImpl = ({
   // PretextText performs accurate canvas-measured line-breaking without reflow.
   if (!hasConfig) {
     return (
-      <Box ref={containerRef} sx={boxSx} className={className} {...htmlProps}>
+      <Box component={component} ref={containerRef} sx={boxSx} className={className} {...htmlProps}>
         <PretextSimpleText
           key={fontsLoaded ? "loaded" : "loading"}
           text={transformedText}
@@ -119,7 +144,7 @@ export const TextImpl = ({
   // Uses pretext's rich-inline measurement to completely avoid browser layout reflows
   // while accurately placing differently-sized rich text segments (bold, code, etc.)
   return (
-    <Box ref={containerRef} sx={boxSx} className={className} {...htmlProps}>
+    <Box component={component} ref={containerRef} sx={boxSx} className={className} {...htmlProps}>
       <PretextRichText
         items={parsedData.items}
         tokens={parsedData.tokens}
@@ -135,4 +160,4 @@ export const TextImpl = ({
       />
     </Box>
   );
-};
+});
