@@ -16,7 +16,7 @@ This library provides a drop-in `<Text />` wrapper built on top of [`@chenglou/p
 ## Installation
 
 ```bash
-npm install dynamic-pretext
+npm install H0N3YC4T/dynamic-pretext
 ```
 
 *Peer Dependencies: `react`, `react-dom`, `@mui/material`, and `@chenglou/pretext`.*
