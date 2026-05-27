@@ -1,0 +1,17 @@
+{
+  "name": "dynamic-pretext",
+  "version": "1.0.0",
+  "description": "High-performance React text wrapper built around @chenglou/pretext.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@mui/material": "^5.0.0",
+    "@chenglou/pretext": "*"
+  },
+  "author": "Andrew",
+  "license": "MIT"
+}
