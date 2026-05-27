@@ -58,23 +58,23 @@ export const Text = forwardRef((props, ref) => {
   const preventWrap = manualNewLine || noWrap;
   const appliedWrapBuffer = lazyWrapping ? 0 : wrapBuffer;
   const currentAlign = align || sx?.textAlign;
-  
+
   if (typeof text === "string") {
     const normalizedText = text.replace(/<br\s*\/?>/gi, "\n");
     if (normalizedText.includes("\n")) {
       const lines = normalizedText.split("\n");
       return (
-        <Box 
+        <Box
           ref={ref}
           component={component}
-          sx={{ 
-            display: component === "span" ? "inline-flex" : "flex", 
-            flexDirection: "column", 
+          sx={{
+            display: component === "span" ? "inline-flex" : "flex",
+            flexDirection: "column",
             ...(currentAlign === "center" ? { alignItems: "center", ...(shrinkWrap || preventWrap ? { mx: "auto" } : {}) } : currentAlign === "right" ? { alignItems: "flex-end", ...(shrinkWrap || preventWrap ? { ml: "auto" } : {}) } : {}),
-            ...(shrinkWrap && { width: "max-content", maxWidth: "100%" }), 
+            ...(shrinkWrap && { width: "max-content", maxWidth: "100%" }),
             ...(preventWrap && { whiteSpace: "nowrap", width: "max-content", maxWidth: "none" }),
-            ...sx 
-          }} 
+            ...sx
+          }}
           className={className}
         >
           {lines.map((line, i) => (
@@ -85,5 +85,4 @@ export const Text = forwardRef((props, ref) => {
     }
   }
   return <TextImpl align={align} wrapBuffer={appliedWrapBuffer} {...props} />;
-};
-
+});

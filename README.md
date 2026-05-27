@@ -28,18 +28,18 @@ npm install dynamic-pretext
 At its core, `dynamic-pretext` acts as a highly optimized replacement for the standard MUI `<Typography>` component. It accepts all standard top-level typography properties.
 
 ```jsx
-import { Text } from "dynamic-pretext";
+import { Text } from "@/components/Pretext/src";
 
 export const WelcomeBanner = () => {
   return (
-    <Text 
-      variant="body1" 
-      color="text.secondary" 
+    <Text
+      variant="body1"
+      color="text.secondary"
       fontSize="1.125rem"
       fontWeight={500}
       lineHeight={1.6}
       component="p"
-      text="Welcome to the platform. This text is mathematically measured." 
+      text="Welcome to the platform. This text is mathematically measured."
     />
   );
 };
@@ -50,24 +50,24 @@ export const WelcomeBanner = () => {
 By supplying a `config` object, the wrapper switches to a rich-inline measurement path. This mode parses the text block, identifies special substrings, and renders them with custom React nodes—all while retaining strict pixel-perfect line breaking without relying on the browser to flow the elements.
 
 ```jsx
-import { Text } from "dynamic-pretext";
+import { Text } from "@/components/Pretext/src";
 
 export const HighlightedMission = () => {
   const missionText = "DynamicPretext provides a fast, zero-reflow layout engine.";
 
   return (
-    <Text 
+    <Text
       variant="body1"
       text={missionText}
       config={{
         // Simple string mapping to a built-in rule
         "DynamicPretext": "highlight",
-        
+
         // Complex rule targeting with arguments
-        "zero-reflow layout engine": { 
-          type: "bold", 
-          args: ["primary.main"], 
-          exactCase: false 
+        "zero-reflow layout engine": {
+          type: "bold",
+          args: ["primary.main"],
+          exactCase: false
         }
       }}
     />
@@ -80,10 +80,10 @@ export const HighlightedMission = () => {
 For situations where text should never wrap automatically (e.g., code blocks or structured data), use the `manualNewLine` prop. The container will force a horizontal expansion unless an explicit `\n` or `<br>` is encountered.
 
 ```jsx
-<Text 
+<Text
   variant="code"
   manualNewLine={true}
-  text={"Line 1\nLine 2<br />Line 3"} 
+  text={"Line 1\nLine 2<br />Line 3"}
 />
 ```
 

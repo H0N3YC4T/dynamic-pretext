@@ -7,7 +7,7 @@ import { usePretextTheme } from "../hooks/usePretextTheme";
 import { usePretextRules } from "../hooks/usePretextRules";
 import { extractSxTypography } from "../utils/extractSxTypography";
 import { parseRichInlineText } from "../utils/parseRichInlineText";
-import { useFontsLoaded } from "../../../hooks/useFontsLoaded";
+import { useFontsLoaded } from "../hooks/useFontsLoaded";
 
 import { PretextSimpleText } from "./PretextSimpleText";
 import { PretextRichText } from "./PretextRichText";
@@ -39,7 +39,7 @@ export const TextImpl = forwardRef(({
   const preventWrap = manualNewLine || noWrap;
   const theme = useTheme();
   const fontsLoaded = useFontsLoaded();
-  
+
   const finalPalette = palette || color;
 
   // ── Theme data ─────────────────────────────────────────────────────────────
