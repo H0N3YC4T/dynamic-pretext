@@ -50,11 +50,8 @@ export const PretextSimpleText = ({
     <div style={{ ...style, ...(shrinkWrap && linesResult ? { width: Math.ceil(linesResult.lines.reduce((max, l) => Math.max(max, l.width), 0)) + dynamicBuffer } : {}) }}>
       {displayLines.map((line, i) => {
         const isLastClamped = isTruncated && i === lineClamp - 1;
-        
-        // For the clamped line, we render ALL remaining text and let CSS text-overflow handle the ellipsis
         const lineText = isLastClamped 
-          ? text.slice(line.start.graphemeIndex) // Wait, start grapheme index might be wrong if it spans segments. 
-            // Better to join remaining line texts!
+          ? text.slice(line.start.graphemeIndex)
           : line.text;
 
         const clampedText = isLastClamped
