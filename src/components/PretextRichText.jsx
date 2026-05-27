@@ -16,11 +16,7 @@ export const PretextRichText = ({
   style,
 }) => {
   const width = usePretextContainerWidth(containerRef);
-
-  // Phase 1: prepare
   const prepared = useMemo(() => prepareRichInline(items), [items]);
-
-  // Phase 2: layout
   const { lines, computedWidth, dynamicBuffer } = useMemo(() => {
     if (!manualNewLine && (width == null || width <= 0)) return { lines: null, computedWidth: null, dynamicBuffer: 0 };
     const dynBuf = wrapBuffer !== undefined ? wrapBuffer : Math.ceil((width || 0) * 0.015);
@@ -36,8 +32,7 @@ export const PretextRichText = ({
   }, [prepared, width, shrinkWrap, manualNewLine, wrapBuffer]);
 
   if (lines === null || (!manualNewLine && width === null)) {
-    // Render text invisibly until width is known so the container can
-    // establish its natural size before the ResizeObserver fires.
+
     return (
       <span aria-hidden="true" style={{ visibility: "hidden" }}>
         {items.map(i => i.text).join("")}
@@ -52,8 +47,6 @@ export const PretextRichText = ({
     <div style={{ ...style, ...(shrinkWrap && computedWidth ? { width: Math.ceil(computedWidth) + dynamicBuffer } : {}) }}>
       {displayLines.map((line, i) => {
         const isLastClamped = isTruncated && i === lineClamp - 1;
-
-        // If clamped, merge all remaining fragments from this line onwards
         let displayFragments = line.fragments;
         if (isLastClamped) {
           displayFragments = lines.slice(i).flatMap(l => l.fragments);
