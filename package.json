@@ -9,7 +9,7 @@
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@mui/material": "^5.0.0",
+    "@mui/material": "^9.0.0",
     "@chenglou/pretext": "*"
   },
   "author": "H0N3YC4T",
