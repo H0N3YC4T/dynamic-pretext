@@ -1,5 +1,5 @@
 {
-  "name": "dynamic-pretext",
+  "name": "@H0N3YC4T/dynamic-pretext",
   "version": "1.0.0",
   "description": "High-performance React text wrapper built around @chenglou/pretext.",
   "main": "src/index.js",
